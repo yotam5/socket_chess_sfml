@@ -9,6 +9,8 @@
 #include <SFML/System.hpp>
 #include "../source/directions.cpp"
 
+#define Debug(param1) (std::cout << param1 << std::endl)
+
 #include <string>
 #include <vector>
 

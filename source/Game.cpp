@@ -18,17 +18,17 @@ void Game::update()
     {
         auto dataStr = this->netManager.getMsgCopy();
         auto pieceData = this->netManager.convertTo<std::array<int, 4>>(dataStr);
-        std::cout << "nanai" << std::endl;
         this->EngineBoard->moveFromTo(
             7 - pieceData[2], 7- pieceData[3],
             7 - pieceData[0], 7 - pieceData[1]);
-        std::cout << "what" <<std::endl;
         this->netManager.setFullyRecive(false);
         this->currentPlayer = this->currentPlayer == WHITE ? BLACK : WHITE;
     }
-    if (this->EngineBoard->isCheckMate(this->currentPlayer))
+    if (this->EngineBoard->isCheckMate(Color::BLACK) || this->EngineBoard->isCheckMate(Color::WHITE)) //NOTE
     {
         this->chess = true;
+        Debug("winner");
+        exit(1); //NOTE
     }
     this->updatePollEvents();
 }
@@ -104,6 +104,7 @@ void Game::render()
         str += this->EngineBoard->isInChess(WHITE) ? "Black" : "White";
         this->text.setString(str);
         sleepTime = 5;
+        std::cout << "yap\n";
     }
     this->window->draw(this->text);
     this->window->display();
@@ -181,6 +182,8 @@ void Game::run()
             this->render();
             if (this->chess)
             {
+                Debug("Winner");
+                exit(1);
                 break;
             }
         }

@@ -281,13 +281,17 @@ void Board::implementLastMove(int rowTo, int columnTo, int rowFrom, int columnFr
     this->saveTo = nullptr;
     this->board[rowTo][columnTo]->setPosition(rowTo, columnTo);
     this->currentPlayer = (this->currentPlayer == WHITE) ? BLACK : WHITE;
+    Debug(1);
     chess = this->isInChess(this->currentPlayer);
+    Debug(2);
 }
 
 //check for checkmate
 bool Board::isCheckMate(Color color)
 {
+    Debug(3);
     bool chess = this->isInChess(color);
+    Debug(4);
     if (!chess)
     {
         return false;
@@ -308,16 +312,29 @@ bool Board::isCheckMate(Color color)
                 for (auto move : pieceMoves)
                 {
                     //if legall~
-                    if (this->doMove(move.first, move.second, currentPiecePos.first, currentPiecePos.second))
+                    Debug(45); // //NOTE: fix me SEGMENT FAULTJ, TRY EXEPT?
+                    try
                     {
-                        this->moveCounter++; //NOTE
-                        chess = this->isInChess(color);
-                        this->redoLastMove(move.first, move.second, currentPiecePos.first, currentPiecePos.second);
-                        if (!chess)
+                        if (this->doMove(move.first, move.second, currentPiecePos.first, currentPiecePos.second))
                         {
-                            this->saveTo = copy;
-                            return false;
+                            this->moveCounter++; //NOTE
+                            Debug(7);
+                            chess = this->isInChess(color);
+                            Debug(8);
+                            Debug(this->currentPlayer);
+                            Debug(25);
+                            this->redoLastMove(move.first, move.second, currentPiecePos.first, currentPiecePos.second);
+                            if (!chess)
+                            {
+                                this->saveTo = copy;
+                                return false;
+                            }
+                            Debug(24);
                         }
+                    }
+                    catch (...)
+                    {
+                        /* code */
                     }
                 }
             }
@@ -339,8 +356,10 @@ bool Board::move(int rowTo, int columnTo, int rowFrom, int columnFrom) //the new
 
     if (this->doMove(rowTo, columnTo, rowFrom, columnFrom))
     {
-        if (isInChess(BLACK)) //FIXME if the move make open to chess, illegal
+        Debug(5);
+        if (isInChess(this->currentPlayer)) //FIXME if the move make open to chess, illegal
         {
+            Debug(6);
             this->redoLastMove(rowTo, columnTo, rowFrom, columnFrom);
             return false;
         }
